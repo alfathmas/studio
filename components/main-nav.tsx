@@ -72,9 +72,9 @@ export default function MainNav() {
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="/project" legacyBehavior passHref>
+          <Link href="/work" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Project
+              Our Work
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
