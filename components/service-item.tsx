@@ -72,6 +72,7 @@ const ServiceItem = async () => {
                           width={2400}
                           height={3000}
                           decoding="async"
+                          data-nimg="1"
                           className="w-full bg-neutral-100 object-cover"
                           style={{
                             color: "transparent",
