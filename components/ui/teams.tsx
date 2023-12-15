@@ -43,8 +43,6 @@ const fetchData = async () => {
 const Teams = async () => {
   const { data } = await fetchData();
 
-  console.log(data.map((item: ItemType) => item.attributes.Image.data.attributes.url))
-
   return (
     <div className="mx-auto max-w-7xl px-6 lg:px-8 mt-24 sm:mt-32 lg:mt-40">
       <div className="mx-auto max-w-2xl lg:max-w-none">
