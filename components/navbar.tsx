@@ -7,7 +7,7 @@ import { monasansMedium } from "@/styles/fonts";
 
 const Navbar = async () => {
   return (
-    <div className="">
+    <header>
       <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
         <div className="mx-auto max-w-2xl lg:max-w-none">
           <div className="flex items-center justify-between">
@@ -20,7 +20,7 @@ const Navbar = async () => {
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 
