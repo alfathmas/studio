@@ -1,12 +1,16 @@
+"use client";
+
 import Link from "next/link";
-import Container from "@/components/ui/container";
 
 import MainNav from "@/components/main-nav";
-import { cn } from "@/lib/utils";
-import { monasansMedium } from "@/styles/fonts";
 import MobileNav from "./mobile-nav";
+import { useState } from "react";
 
-const Navbar = async () => {
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const openToggleHandler = () => setIsOpen(!isOpen);
+
   return (
     <header>
       <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
@@ -52,10 +56,47 @@ const Navbar = async () => {
             <div className="hidden sm:block">
               <MainNav />
             </div>
+            <div className="block sm:hidden">
+              {/* Mobile menu button */}
+              {isOpen ? (
+                <button
+                  type="button"
+                  aria-expanded="true"
+                  aria-controls=":R5a:"
+                  className="group -m-2.5 rounded-full p-2.5 transition hover:bg-neutral-950/10"
+                  aria-label="Toggle navigation"
+                  onClick={openToggleHandler}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="h-6 w-6 fill-neutral-950 group-hover:fill-neutral-700"
+                  >
+                    <path d="m5.636 4.223 14.142 14.142-1.414 1.414L4.222 5.637z"></path>
+                    <path d="M4.222 18.363 18.364 4.22l1.414 1.414L5.636 19.777z"></path>
+                  </svg>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls=":R5a:"
+                  className="group -m-2.5 rounded-full p-2.5 transition hover:bg-neutral-950/10"
+                  aria-label="Toggle navigation"
+                  onClick={openToggleHandler}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    className="h-6 w-6 fill-neutral-950 group-hover:fill-neutral-700"
+                  >
+                    <path d="M2 6h20v2H2zM2 16h20v2H2z"></path>
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
-          <div className="block sm:hidden">
-            <MobileNav />
-          </div>
+          <div className="block sm:hidden">{isOpen && <MobileNav />}</div>
         </div>
       </div>
     </header>

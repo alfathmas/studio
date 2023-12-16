@@ -22,7 +22,7 @@ export default function RootLayout({
       <body className={cn(`${monasansLight.className}`)}>
         <Navbar />
         <div
-          className="relative flex flex-auto overflow-hidden bg-white pt-14"
+          className="relative flex flex-auto overflow-hidden bg-white"
           style={{
             borderTopLeftRadius: "40px",
             borderTopRightRadius: "40px",
@@ -31,7 +31,7 @@ export default function RootLayout({
           }}
         >
           <div
-            className="relative isolate flex w-full flex-col pt-9"
+            className="relative isolate flex w-full flex-col"
             style={{
               transform: "none",
               transformOrigin: "50% 50% 0px",
