@@ -27,14 +27,14 @@ export default function MainNav() {
 
               <a
                 className="group relative -mx-6 py-6 sm:mx-0 sm:px-0 sm:py-16 sm:even:border-neutral-800"
-                href="/process"
+                href="/services"
               >
                 Services
                 <span className="absolute inset-y-0 -z-10 w-screen bg-neutral-950/10 opacity-0 transition -left-6 group-hover:opacity-100"></span>
               </a>
               <a
                 className="group relative -mx-6 py-6 sm:mx-0 sm:px-0 sm:py-16 sm:even:border-neutral-800"
-                href="/blog"
+                href="/blogs"
               >
                 Blogs
                 <span className="absolute inset-y-0 -z-10 w-screen bg-neutral-950/10 opacity-0 transition -left-6 group-hover:opacity-100"></span>
