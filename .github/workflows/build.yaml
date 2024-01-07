@@ -87,7 +87,7 @@ jobs:
 
     - name: Update Docker image tag
       run: |
-        yq e -i '.image.tag="'c01e0776c497edc44c2f4b777ec40e4effe1afae'"' argocd-helm/apps/charts/next/values/studio.values.yaml
+        yq e -i '.image.tag="'c01e0776c497edc44c2f4b777ec40e4effe1afae'"' argocd/argocd-helm/apps/charts/next/values/studio.values.yaml
         git add .
         git commit -m "bump up image @bypass-review"
         git push -u origin main
