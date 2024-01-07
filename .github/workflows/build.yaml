@@ -19,6 +19,7 @@ env:
 jobs:
   build-publish:
     name: Build and Publish
+
     runs-on: ubuntu-latest
     environment: dev
 
@@ -67,9 +68,10 @@ jobs:
       run: |-
         docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA"
 
-  update-manifest:
+  update-image:
     needs: build-publish
-    name: Update manifest
+    name: Update Image
+
     runs-on: ubuntu-latest
     environment: dev
 
@@ -91,13 +93,14 @@ jobs:
         git push -u origin main
 
   sync-app:
-    needs: update-manifest
-    name: Sync App ArgoCD
+    needs: update-image
+    name: Sync App
+
     runs-on: ubuntu-latest
     environment: dev
 
     steps:
-    - name: Checkout
+    - name: Install ArgoCD CLI
       run: |
         VERSION=v2.9.3 # Select desired TAG from https://github.com/argoproj/argo-cd/releases
         curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/download/$VERSION/argocd-linux-amd64
