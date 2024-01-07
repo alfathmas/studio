@@ -12,6 +12,9 @@ env:
   DEPLOYMENT_NAME: studio # TODO: update to deployment name
   REPOSITORY: infra-dev # TODO: update to Artifact Registry docker repository
   IMAGE: studio
+  ARGOCD_SERVER: argocd.buruhketik.com
+  ARGOCD_PASSWORD: UVkIFRTzTTt2ao8B
+  ARGOCD_APP: argocd/studio
 
 jobs:
   build-publish:
@@ -86,3 +89,25 @@ jobs:
         git add .
         git commit -m "bump up image @bypass-review"
         git push -u origin main
+
+  sync-app:
+    needs: manifest
+    name: Sync App ArgoCD
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+    - name: Checkout
+      run: |
+        VERSION=v2.9.3 # Select desired TAG from https://github.com/argoproj/argo-cd/releases
+        curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/download/$VERSION/argocd-linux-amd64
+        sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+        rm argocd-linux-amd64
+
+    - name: Login to ArgoCD
+      run: |
+        argocd login --insecure --grpc-web --username admin --password ${{ env.ARGOCD_PASSWORD }} --grpc-web-root-path /argocd --server ${{ env.ARGOCD_SERVER }}
+
+    - name: Sync App
+      run: |
+        argocd app sync ${{ env.ARGOCD_APP }} --prune --timeout 600
