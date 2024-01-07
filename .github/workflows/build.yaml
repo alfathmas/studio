@@ -96,7 +96,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        repository: git@github.com:alfathmas/argocd.git
+        repository: alfathmas/argocd
         ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Set up SSH Key
