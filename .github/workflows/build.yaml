@@ -70,7 +70,7 @@ jobs:
     # Copy environment variables from secrets and create .env file
     - name: Copy environment variables and create .env file
       run: |
-        echo "ENV_VAR=${{ secrets.ENV_VAR }}" >> .env
+        echo "${{ secrets.ENV_VAR }}" >> .env
         ls -la
         cat .env
 
