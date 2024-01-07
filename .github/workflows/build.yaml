@@ -91,7 +91,7 @@ jobs:
         git push -u origin main
 
   sync-app:
-    needs: manifest
+    needs: update-manifest
     name: Sync App ArgoCD
     runs-on: ubuntu-latest
     environment: dev
