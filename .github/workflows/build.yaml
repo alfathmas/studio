@@ -14,33 +14,24 @@ env:
   IMAGE: studio
 
 jobs:
-  setup-build-publish-deploy:
-    name: Setup, Build, Publish, and Deploy
-    runs-on: ubuntu-latest
-    environment: dev
+  # build-publish:
+  #   name: Setup, Build, Publish, and Deploy
+  #   runs-on: ubuntu-latest
+  #   environment: dev
 
-    permissions:
-      contents: 'read'
-      id-token: 'write'
+  #   permissions:
+  #     contents: 'read'
+  #     id-token: 'write'
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    # Configure Workload Identity Federation and generate an access token.
-    # - id: 'auth'
-    #   name: 'Authenticate to Google Cloud'
-    #   uses: 'google-github-actions/auth@v0'
-    #   with:
-    #     token_format: 'access_token'
-    #     workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
-    #     service_account: 'docker@alfath-410301.iam.gserviceaccount.com'
+  #   steps:
+  #   - name: Checkout
+  #     uses: actions/checkout@v3
 
     # Alternative option - authentication via credentials json
-    - id: 'auth'
-      uses: 'google-github-actions/auth@v2'
-      with:
-        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+    # - id: 'auth'
+    #   uses: 'google-github-actions/auth@v2'
+    #   with:
+    #     credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
     # - name: Docker configuration
     #   run: |-
@@ -73,25 +64,6 @@ jobs:
     #   run: |-
     #     docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA"
 
-    - name: Set up SSH Key
-      run: |
-        mkdir -p ~/.ssh/
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-    # Checkout the Kubernetes manifest repository
-    - name: Clone Another Repository with SSH
-      run: |
-        git clone git@github.com:alfathmas/argocd.git
-        ls -la
-        yq e -i '.image.tag="'c01e0776c497edc44c2f4b777ec40e4effe1afae'"' argocd/argocd-helm/apps/charts/next/values/studio.values.yaml
-        git config --global user.email "alfathmas24@gmail.com"
-        git config --global user.name "github-agent"
-        git add .
-        git commit -m "bump up image @bypass-review"
-        git push -u origin main
-
     # - name: Update Docker image tag
     #   run: |
     #     yq e -i '.image.tag="'c01e0776c497edc44c2f4b777ec40e4effe1afae'"' argocd/argocd-helm/apps/charts/next/values/studio.values.yaml
@@ -115,3 +87,33 @@ jobs:
     #     ./kustomize build . | kubectl apply -f -
     #     kubectl rollout status deployment/$DEPLOYMENT_NAME
     #     kubectl get services -o wide
+  update-manifest:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        repository: git@github.com:alfathmas/argocd.git
+        ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Set up SSH Key
+      run: |
+        mkdir -p ~/.ssh/
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    # Checkout the Kubernetes manifest repository
+    - name: Clone Another Repository with SSH
+      run: |
+        git clone git@github.com:alfathmas/argocd.git
+        ls -la
+        yq e -i '.image.tag="'c01e0776c497edc44c2f4b777ec40e4effe1afae'"' argocd/argocd-helm/apps/charts/next/values/studio.values.yaml
+        git config --global user.email "alfathmas24@gmail.com"
+        git config --global user.name "github-agent"
+        git add .
+        git commit -m "bump up image @bypass-review"
+        git push -u origin main
