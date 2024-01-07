@@ -55,35 +55,39 @@ jobs:
         cluster_name: ${{ env.GKE_CLUSTER }}
         location: ${{ env.GKE_ZONE }}
 
-    # Copy environment variables from secrets and create .env file
-    - name: Copy environment variables and create .env file
-      run: |
-        echo "${{ secrets.ENV_VAR }}" >> .env
+    # # Copy environment variables from secrets and create .env file
+    # - name: Copy environment variables and create .env file
+    #   run: |
+    #     echo "${{ secrets.ENV_VAR }}" >> .env
 
-    # Build the Docker image
-    - name: Build
-      run: |-
-        docker build \
-          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA" \
-          --build-arg GITHUB_SHA="$GITHUB_SHA" \
-          --build-arg GITHUB_REF="$GITHUB_REF" \
-          .
-    # Push the Docker image to Google Artifact Registry
-    - name: Publish
-      run: |-
-        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA"
+    # # Build the Docker image
+    # - name: Build
+    #   run: |-
+    #     docker build \
+    #       --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA" \
+    #       --build-arg GITHUB_SHA="$GITHUB_SHA" \
+    #       --build-arg GITHUB_REF="$GITHUB_REF" \
+    #       .
+    # # Push the Docker image to Google Artifact Registry
+    # - name: Publish
+    #   run: |-
+    #     docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA"
+
+    - name: Set up SSH Key
+      run: |
+        mkdir -p ~/.ssh/
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
 
     # Checkout the Kubernetes manifest repository
-    - name: Checkout Kubernetes manifest repository
-      uses: actions/checkout@v2
-      with:
-        repository: git@github.com:alfathmas/argocd.git
-        ref: main
-        path: argocd-helm/apps/charts/next/values/studio.values.yaml
+    - name: Clone Another Repository with SSH
+      run: |
+        git clone git@github.com:alfathmas/argocd.git
 
     - name: Update Docker image tag
       run: |
-        yq e -i '.image.tag="'$$GITHUB_SHA'"' argocd-helm/apps/charts/next/values/studio.values.yaml
+        yq e -i '.image.tag="'c01e0776c497edc44c2f4b777ec40e4effe1afae'"' argocd-helm/apps/charts/next/values/studio.values.yaml
         git add .
         git commit -m "bump up image @bypass-review"
         git push -u origin main
