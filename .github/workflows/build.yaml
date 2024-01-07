@@ -71,6 +71,8 @@ jobs:
     - name: Copy environment variables and create .env file
       run: |
         echo "ENV_VAR=${{ secrets.ENV_VAR }}" >> .env
+        ls -la
+        cat .env
 
     # Build the Docker image
     - name: Build
