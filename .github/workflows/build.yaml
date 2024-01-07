@@ -1,15 +1,3 @@
-# This workflow will build a docker container, publish it to Google Container Registry, and deploy it to GKE when there is a push to the "main" branch.
-#
-# To configure this workflow:
-#
-# 1. Ensure that your repository contains the necessary configuration for your Google Kubernetes Engine cluster, including deployment.yml, kustomization.yml, service.yml, etc.
-#
-# 2. Create and configure a Workload Identity Provider for GitHub (https://github.com/google-github-actions/auth#setting-up-workload-identity-federation)
-#
-# 3. Change the values for the GAR_LOCATION, GKE_ZONE, GKE_CLUSTER, IMAGE, REPOSITORY and DEPLOYMENT_NAME environment variables (below).
-#
-# For more support on how to run the workflow, please visit https://github.com/google-github-actions/setup-gcloud/tree/master/example-workflows/gke-kustomize
-
 name: Build and Deploy to GKE
 
 on:
@@ -29,7 +17,7 @@ jobs:
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
-    environment: production
+    environment: dev
 
     permissions:
       contents: 'read'
@@ -71,8 +59,6 @@ jobs:
     - name: Copy environment variables and create .env file
       run: |
         echo "${{ secrets.ENV_VAR }}" >> .env
-        ls -la
-        cat .env
 
     # Build the Docker image
     - name: Build
@@ -86,11 +72,28 @@ jobs:
     - name: Publish
       run: |-
         docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$GITHUB_SHA"
+
+    # Checkout the Kubernetes manifest repository
+    - name: Checkout Kubernetes manifest repository
+      uses: actions/checkout@v2
+      with:
+        repository: git@github.com:alfathmas/argocd.git
+        ref: main
+        path: argocd-helm/apps/charts/next/values/studio.values.yaml
+
+    - name: Update Docker image tag
+      run: |
+        yq e -i '.image.tag="'$$GITHUB_SHA'"' argocd-helm/apps/charts/next/values/studio.values.yaml
+        git add .
+        git commit -m "bump up image @bypass-review"
+        git push -u origin main
+
     # Set up kustomize
     # - name: Set up Kustomize
     #   run: |-
     #     curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
     #     chmod u+x ./kustomize
+
     # # Deploy the Docker image to the GKE cluster
     # - name: Deploy
     #   run: |-
