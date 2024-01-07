@@ -106,7 +106,7 @@ jobs:
 
     - name: Login to ArgoCD
       run: |
-        argocd login --insecure --grpc-web --username admin --password ${{ env.ARGOCD_PASSWORD }} --grpc-web-root-path /argocd --server ${{ env.ARGOCD_SERVER }}
+        argocd login ${{ env.ARGOCD_SERVER }} --insecure --username admin --password ${{ env.ARGOCD_PASSWORD }}
 
     - name: Sync App
       run: |
