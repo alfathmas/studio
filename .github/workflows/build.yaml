@@ -67,6 +67,11 @@ jobs:
         cluster_name: ${{ env.GKE_CLUSTER }}
         location: ${{ env.GKE_ZONE }}
 
+    # Copy environment variables from secrets and create .env file
+    - name: Copy environment variables and create .env file
+      run: |
+        echo "ENV_VAR=${{ secrets.ENV_VAR }}" >> .env
+
     # Build the Docker image
     - name: Build
       run: |-
