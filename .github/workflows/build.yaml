@@ -42,18 +42,18 @@ jobs:
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-    - name: Docker configuration
-      run: |-
-        # echo ${{steps.auth.outputs.access_token}} | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev
-        echo '${{ secrets.GCP_CREDENTIALS }}' > gcp_credentials.json
-        docker login -u _json_key --password-stdin https://$GAR_LOCATION-docker.pkg.dev < gcp_credentials.json
+    # - name: Docker configuration
+    #   run: |-
+    #     # echo ${{steps.auth.outputs.access_token}} | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev
+    #     echo '${{ secrets.GCP_CREDENTIALS }}' > gcp_credentials.json
+    #     docker login -u _json_key --password-stdin https://$GAR_LOCATION-docker.pkg.dev < gcp_credentials.json
 
-    # Get the GKE credentials so we can deploy to the cluster
-    - name: Set up GKE credentials
-      uses: google-github-actions/get-gke-credentials@v2
-      with:
-        cluster_name: ${{ env.GKE_CLUSTER }}
-        location: ${{ env.GKE_ZONE }}
+    # # Get the GKE credentials so we can deploy to the cluster
+    # - name: Set up GKE credentials
+    #   uses: google-github-actions/get-gke-credentials@v2
+    #   with:
+    #     cluster_name: ${{ env.GKE_CLUSTER }}
+    #     location: ${{ env.GKE_ZONE }}
 
     # # Copy environment variables from secrets and create .env file
     # - name: Copy environment variables and create .env file
@@ -84,15 +84,22 @@ jobs:
     - name: Clone Another Repository with SSH
       run: |
         git clone git@github.com:alfathmas/argocd.git
-
-    - name: Update Docker image tag
-      run: |
+        ls -la
         yq e -i '.image.tag="'c01e0776c497edc44c2f4b777ec40e4effe1afae'"' argocd/argocd-helm/apps/charts/next/values/studio.values.yaml
         git config --global user.email "alfathmas24@gmail.com"
         git config --global user.name "github-agent"
         git add .
         git commit -m "bump up image @bypass-review"
         git push -u origin main
+
+    # - name: Update Docker image tag
+    #   run: |
+    #     yq e -i '.image.tag="'c01e0776c497edc44c2f4b777ec40e4effe1afae'"' argocd/argocd-helm/apps/charts/next/values/studio.values.yaml
+    #     git config --global user.email "alfathmas24@gmail.com"
+    #     git config --global user.name "github-agent"
+    #     git add .
+    #     git commit -m "bump up image @bypass-review"
+    #     git push -u origin main
 
     # Set up kustomize
     # - name: Set up Kustomize
