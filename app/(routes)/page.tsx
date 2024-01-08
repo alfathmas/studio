@@ -7,6 +7,7 @@ import ServiceBanner from "@/components/service-banner";
 import ServiceItem from "@/components/service-item";
 
 export default function Home() {
+  console.log('test')
   return (
     <>
       <svg
